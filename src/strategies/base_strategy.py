@@ -276,6 +276,10 @@ class BaseStrategy(ABC):
             # For shorts/sells: limit slightly above current price
             limit_price = signal_price + offset
 
+        # Alpaca requires prices in $0.01 increments for equities above $1
+        # Sub-penny prices produce error code 42210000 and reject every order
+        limit_price = round(limit_price, 2)  # O(1)
+
         return OrderType.LIMIT, limit_price
 
     # ── ATR-based position sizing ─────────────────────────────────────────────
